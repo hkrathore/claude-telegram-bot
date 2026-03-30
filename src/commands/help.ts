@@ -1,5 +1,5 @@
 import type { BotContext } from "../types.js";
-import { BOT_COMMANDS, SKILL_COMMANDS } from "./index.js";
+import { BOT_COMMANDS, BUILTIN_SKILL_COMMANDS, CUSTOM_SKILL_COMMANDS } from "./index.js";
 
 export async function helpCommand(ctx: BotContext): Promise<void> {
   let text = "<b>Bot Commands</b>\n";
@@ -7,8 +7,14 @@ export async function helpCommand(ctx: BotContext): Promise<void> {
     text += `/${cmd.command} - ${cmd.description}\n`;
   }
   text += "\n<b>Claude Code Skills</b>\n";
-  for (const cmd of SKILL_COMMANDS) {
+  for (const cmd of BUILTIN_SKILL_COMMANDS) {
     text += `/${cmd.command} - ${cmd.description}\n`;
+  }
+  if (CUSTOM_SKILL_COMMANDS.length > 0) {
+    text += "\n<b>Custom Skills</b>\n";
+    for (const cmd of CUSTOM_SKILL_COMMANDS) {
+      text += `/${cmd.command} - ${cmd.description}\n`;
+    }
   }
   text += "\nOr just send any message to chat with Claude.";
   await ctx.reply(text, { parse_mode: "HTML" });

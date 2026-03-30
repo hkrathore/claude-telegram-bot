@@ -14,6 +14,7 @@ Works in 1:1 chats and group conversations.
 - **Live progress updates** -- see what Claude is doing in real time ("Using Bash...", "Using Read...")
 - **Cancel support** -- `/cancel` aborts a running operation
 - **Rate limiting** -- one active invocation per chat, no accidental spam
+- **Auto-discover custom skills** -- picks up skills from `~/.claude/skills/` automatically
 - **Long response handling** -- auto-chunks responses that exceed Telegram's 4096 char limit
 - **Markdown formatting** -- Claude's markdown output converted to Telegram-compatible HTML
 
@@ -105,6 +106,10 @@ The bot will start polling for messages. Send `/start` to your bot on Telegram.
 | `/clean_gone` | Clean up deleted branches |
 
 > Telegram commands don't support hyphens, so `commit-push-pr` becomes `commit_push_pr`. The bot maps them back automatically.
+
+### Custom skills
+
+Any skills you've created in `~/.claude/skills/` are automatically discovered at startup and registered as Telegram commands. They appear in `/help` under "Custom Skills" and get Telegram autocomplete.
 
 ## Architecture
 

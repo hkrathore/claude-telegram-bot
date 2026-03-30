@@ -2,8 +2,8 @@
  * Convert Claude's Markdown output to Telegram-compatible HTML.
  *
  * Telegram supports a limited subset of HTML (b, i, u, s, code, pre, a).
- * We process code blocks first so their contents get HTML-escaped but
- * no further markdown transformations are applied inside them.
+ * We extract code blocks and links first so their contents are handled
+ * correctly, then HTML-escape and convert the remaining markdown.
  */
 
 /** Escape characters that are special in HTML. */
@@ -18,8 +18,6 @@ export function markdownToTelegramHtml(markdown: string): string {
   if (!markdown) return "";
 
   // ---- Step 1: Extract code blocks so they aren't mangled ----
-  // We replace them with placeholders, convert the rest, then put them back.
-
   const codeBlocks: string[] = [];
   const CODE_PH = "\x00CB";
 
@@ -34,7 +32,7 @@ export function markdownToTelegramHtml(markdown: string): string {
     },
   );
 
-  // Handle unclosed code fences – treat everything after ``` as a code block
+  // Handle unclosed code fences
   text = text.replace(/```(\w*)\n?([\s\S]*)$/g, (_match, lang: string, code: string) => {
     const escaped = escapeHtml(code.replace(/\n$/, ""));
     const langAttr = lang ? ` class="language-${lang}"` : "";
@@ -51,6 +49,19 @@ export function markdownToTelegramHtml(markdown: string): string {
     return `${INLINE_PH}${inlineBlocks.length - 1}${INLINE_PH}`;
   });
 
+  // ---- Step 1b: Extract links before HTML-escaping ----
+  // This prevents URLs from getting double-encoded (&amp; in href)
+  const linkBlocks: string[] = [];
+  const LINK_PH = "\x00LK";
+
+  text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, linkText: string, url: string) => {
+    const escapedText = escapeHtml(linkText);
+    // URL needs & escaped for XML but not double-escaped
+    const safeUrl = url.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+    linkBlocks.push(`<a href="${safeUrl}">${escapedText}</a>`);
+    return `${LINK_PH}${linkBlocks.length - 1}${LINK_PH}`;
+  });
+
   // ---- Step 2: HTML-escape the remaining text ----
   text = escapeHtml(text);
 
@@ -63,8 +74,7 @@ export function markdownToTelegramHtml(markdown: string): string {
   text = text.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
   text = text.replace(/__(.+?)__/g, "<b>$1</b>");
 
-  // Italic: *text* or _text_ (but not inside words with underscores like foo_bar_baz)
-  // Use word-boundary-aware patterns for underscore variant
+  // Italic: *text* or _text_ (but not inside words with underscores)
   text = text.replace(/\*([^\s*][^*]*?[^\s*])\*/g, "<i>$1</i>");
   text = text.replace(/\*([^\s*])\*/g, "<i>$1</i>");
   text = text.replace(/(?<![a-zA-Z0-9])_([^\s_][^_]*?[^\s_])_(?![a-zA-Z0-9])/g, "<i>$1</i>");
@@ -73,19 +83,18 @@ export function markdownToTelegramHtml(markdown: string): string {
   // Strikethrough: ~~text~~
   text = text.replace(/~~(.+?)~~/g, "<s>$1</s>");
 
-  // Links: [text](url) – note: < > & in the URL were already escaped
-  text = text.replace(
-    /\[([^\]]+)\]\(([^)]+)\)/g,
-    '<a href="$2">$1</a>',
-  );
-
   // Horizontal rules
   text = text.replace(/^---+$/gm, "");
 
-  // ---- Step 4: Restore code blocks ----
+  // ---- Step 4: Restore placeholders ----
   text = text.replace(
     new RegExp(`${INLINE_PH}(\\d+)${INLINE_PH}`, "g"),
     (_match, idx: string) => inlineBlocks[parseInt(idx, 10)],
+  );
+
+  text = text.replace(
+    new RegExp(`${LINK_PH}(\\d+)${LINK_PH}`, "g"),
+    (_match, idx: string) => linkBlocks[parseInt(idx, 10)],
   );
 
   text = text.replace(
@@ -103,14 +112,12 @@ const ALLOWED_TAGS = new Set(["b", "i", "u", "s", "strike", "del", "code", "pre"
 
 /**
  * Remove any HTML tags that Telegram doesn't support.
- * Keeps allowed tags intact, strips everything else (replacing with content).
+ * Keeps allowed tags intact, strips everything else.
  */
 function sanitizeTelegramHtml(html: string): string {
-  // Match opening tags, closing tags, and self-closing tags
   return html.replace(/<\/?([a-zA-Z][a-zA-Z0-9-]*)\b[^>]*\/?>/g, (match, tagName: string) => {
     const tag = tagName.toLowerCase();
     if (ALLOWED_TAGS.has(tag)) return match;
-    // Strip unsupported tag entirely (keep nothing -- the content between open/close is kept by the regex)
     return "";
   });
 }

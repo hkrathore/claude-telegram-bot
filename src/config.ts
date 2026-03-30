@@ -51,10 +51,11 @@ export function loadConfig(): Config {
     throw new Error(`Invalid MAX_BUDGET_USD: ${maxBudgetRaw}`);
   }
 
-  const sessionTtlMs = Number(process.env.SESSION_TTL_MS || String(24 * 60 * 60 * 1000));
-  if (isNaN(sessionTtlMs) || sessionTtlMs <= 0) {
-    throw new Error(`Invalid SESSION_TTL_MS: ${process.env.SESSION_TTL_MS}`);
+  const sessionTtlHours = Number(process.env.SESSION_TTL_HOURS || "24");
+  if (isNaN(sessionTtlHours) || sessionTtlHours <= 0) {
+    throw new Error(`Invalid SESSION_TTL_HOURS: ${process.env.SESSION_TTL_HOURS}`);
   }
+  const sessionTtlMs = sessionTtlHours * 60 * 60 * 1000;
 
   const allowedToolsRaw = process.env.ALLOWED_TOOLS;
   const allowedTools = allowedToolsRaw

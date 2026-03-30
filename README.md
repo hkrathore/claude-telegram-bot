@@ -1,46 +1,46 @@
 # Claude Telegram Bot
 
-A Telegram bot that bridges to [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI. Chat with Claude, run slash commands, and execute skills -- all from Telegram.
+A Telegram bot that bridges to [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI. Chat with Claude, run slash commands, and execute skills, all from Telegram.
 
 Works in 1:1 chats and group conversations.
 
 ## Why not just use the Claude mobile app?
 
-The Claude mobile app is great for conversations. This bot does something different -- it connects to **Claude Code CLI** running on your machine, which means:
+The Claude mobile app is great for conversations. This bot does something different. It connects to **Claude Code CLI** running on your machine, which means:
 
 | | Claude Mobile App | This Bot |
 |---|---|---|
-| Runs code on your machine | No | Yes -- executes Bash, reads/writes files |
-| Git operations | No | Yes -- `/commit`, `/commit_push_pr`, `/code_review` |
-| Access to your codebase | No | Yes -- Claude sees your actual project files |
-| Custom skills | No | Yes -- auto-discovers `~/.claude/skills/` |
-| Working directory control | No | Yes -- `/workdir` targets any local project |
-| Group collaboration | No | Yes -- add to a Telegram group, share one Claude session |
-| Tool use (Read, Edit, Grep, etc.) | No | Yes -- full Claude Code tool suite |
+| Runs code on your machine | No | Yes (executes Bash, reads/writes files) |
+| Git operations | No | Yes (`/commit`, `/commit_push_pr`, `/code_review`) |
+| Access to your codebase | No | Yes (Claude sees your actual project files) |
+| Custom skills | No | Yes (auto-discovers `~/.claude/skills/`) |
+| Working directory control | No | Yes (`/workdir` targets any local project) |
+| Group collaboration | No | Yes (add to a Telegram group, share one Claude session) |
+| Tool use (Read, Edit, Grep, etc.) | No | Yes (full Claude Code tool suite) |
 | Works offline from Anthropic's servers | No | No (both need API access) |
 
-This bot can also do everything Claude Code already does -- regular conversations, code generation, debugging, explanations -- since every message is passed directly through the CLI. You get the full Claude Code experience, just over Telegram.
+This bot can also do everything Claude Code already does: regular conversations, code generation, debugging, explanations. Every message is passed directly through the CLI. You get the full Claude Code experience, just over Telegram.
 
 The group chat angle is especially useful: create purpose-specific Telegram groups (e.g. "Backend Refactor", "Release Prep"), add the bot, and your whole team shares one Claude session with full context. That's something neither the Claude app nor Claude Code CLI offer today.
 
 ## What it does
 
-- **Chat with Claude** -- send any message, get Claude's response
+- **Chat with Claude**: send any message, get Claude's response
 - **All Claude Code skills** available as Telegram commands (`/commit`, `/simplify`, `/code_review`, etc.)
-- **Session continuity** -- conversations persist across messages (Claude remembers context)
-- **Per-chat settings** -- set model and working directory per chat
-- **Group support** -- add the bot to a group, interact via commands or @mentions
-- **Live progress updates** -- see what Claude is doing in real time ("Using Bash...", "Using Read...")
-- **Cancel support** -- `/cancel` aborts a running operation
-- **Voice messages** -- send voice notes, transcribed via OpenAI Whisper and forwarded to Claude
-- **Message queuing** -- send multiple messages while Claude is working; they queue up (max 5) and process in order
-- **File delivery** -- when Claude creates or modifies files, they're sent back to the chat as documents
-- **Smart cost optimization** -- auto-detects casual chat vs code work and uses lightweight mode for simple questions (~10x cheaper)
-- **Image and file support** -- send photos, screenshots, or documents and Claude will analyze them
-- **Retry on error** -- if Claude errors out, hit the Retry button instead of retyping
-- **Auto-discover custom skills** -- picks up skills from `~/.claude/skills/` automatically
-- **Long response handling** -- auto-chunks responses that exceed Telegram's 4096 char limit
-- **Markdown formatting** -- Claude's markdown output converted to Telegram-compatible HTML
+- **Session continuity**: conversations persist across messages (Claude remembers context)
+- **Per-chat settings**: set model and working directory per chat
+- **Group support**: add the bot to a group, interact via commands or @mentions
+- **Live progress updates**: see what Claude is doing in real time ("Using Bash...", "Using Read...")
+- **Cancel support**: `/cancel` aborts a running operation
+- **Voice messages**: send voice notes, transcribed via OpenAI Whisper and forwarded to Claude
+- **Message queuing**: send multiple messages while Claude is working; they queue up (max 5) and process in order
+- **File delivery**: when Claude creates or modifies files, they're sent back to the chat as documents
+- **Smart cost optimization**: auto-detects casual chat vs code work and uses lightweight mode for simple questions (~10x cheaper)
+- **Image and file support**: send photos, screenshots, or documents and Claude will analyze them
+- **Retry on error**: if Claude errors out, hit the Retry button instead of retyping
+- **Auto-discover custom skills**: picks up skills from `~/.claude/skills/` automatically
+- **Long response handling**: auto-chunks responses that exceed Telegram's 4096 char limit
+- **Markdown formatting**: Claude's markdown output converted to Telegram-compatible HTML
 
 ## Prerequisites
 
@@ -91,19 +91,19 @@ The bot will start polling for messages. Send `/start` to your bot on Telegram.
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `TELEGRAM_BOT_TOKEN` | Yes | -- | Bot token from BotFather |
-| `ALLOWED_USER_IDS` | Yes | -- | Comma-separated Telegram user IDs |
+| `TELEGRAM_BOT_TOKEN` | Yes | | Bot token from BotFather |
+| `ALLOWED_USER_IDS` | Yes | | Comma-separated Telegram user IDs |
 | `CLAUDE_MODEL` | No | `sonnet` | Default model (`sonnet`, `opus`, `haiku`) |
 | `DEFAULT_WORKING_DIR` | No | Current dir | Working directory for Claude operations |
-| `ALLOWED_WORKDIR_BASE` | No | -- | Restrict `/workdir` to this base path (security) |
+| `ALLOWED_WORKDIR_BASE` | No | | Restrict `/workdir` to this base path (security) |
 | `CLAUDE_BINARY` | No | `claude` | Path to Claude CLI binary |
-| `MAX_BUDGET_USD` | No | -- | Cost cap per invocation |
+| `MAX_BUDGET_USD` | No | | Cost cap per invocation |
 | `ALLOWED_TOOLS` | No | All | Comma-separated list of tools Claude can use |
-| `OPENAI_API_KEY` | No | -- | OpenAI API key for voice message transcription |
+| `OPENAI_API_KEY` | No | | OpenAI API key for voice message transcription |
 | `SHOW_COST` | No | `false` | Set to `true` to show API cost after each response |
 | `CLAUDE_BARE` | No | `false` | Force lightweight mode globally (skips CLAUDE.md, hooks, plugins) |
 | `SESSION_TTL_HOURS` | No | `24` | Session expiry time |
-| `WEBHOOK_URL` | No | -- | Set to enable webhook mode (polling by default) |
+| `WEBHOOK_URL` | No | | Set to enable webhook mode (polling by default) |
 | `WEBHOOK_PORT` | No | `8443` | Port for webhook server |
 | `WEBHOOK_SECRET` | No | Auto-generated | Secret for webhook verification |
 
@@ -143,7 +143,7 @@ Any skills you've created in `~/.claude/skills/` are automatically discovered at
 ## Architecture
 
 ```
-Telegram → grammY bot → spawn claude -p "<prompt>" --output-format stream-json → parse events → format → send back
+Telegram > grammY bot > spawn claude -p "<prompt>" --output-format stream-json > parse events > format > send back
 ```
 
 ```
@@ -156,7 +156,7 @@ src/
 ├── claude/
 │   ├── cli.ts            # Spawns Claude CLI, parses stream-json
 │   ├── invoke.ts         # Shared invoke-and-respond flow
-│   ├── session-store.ts  # Chat ID → Claude session mapping
+│   ├── session-store.ts  # Chat ID > Claude session mapping
 │   └── types.ts          # CLI output types
 ├── commands/
 │   ├── index.ts          # Command registry + skill auto-discovery
@@ -175,7 +175,7 @@ src/
 │   ├── error.ts          # Error boundary + retry button
 │   └── retry.ts          # Failed prompt storage for retry
 └── util/
-    ├── format.ts         # Markdown → Telegram HTML
+    ├── format.ts         # Markdown > Telegram HTML
     ├── chunker.ts        # Message splitting (4096 char limit)
     ├── reply.ts          # Send with HTML fallback
     └── files.ts          # Detect and send output files back to chat

@@ -19,7 +19,9 @@ The Claude mobile app is great for conversations. This bot does something differ
 | Tool use (Read, Edit, Grep, etc.) | No | Yes -- full Claude Code tool suite |
 | Works offline from Anthropic's servers | No | No (both need API access) |
 
-In short: the Claude app is a chat interface. This bot is a **remote control for Claude Code** that happens to live in Telegram. You can trigger builds, review PRs, commit code, and run custom workflows -- all from your phone.
+This bot can also do everything Claude Code already does -- regular conversations, code generation, debugging, explanations -- since every message is passed directly through the CLI. You get the full Claude Code experience, just over Telegram.
+
+The group chat angle is especially useful: create purpose-specific Telegram groups (e.g. "Backend Refactor", "Release Prep"), add the bot, and your whole team shares one Claude session with full context. That's something neither the Claude app nor Claude Code CLI offer today.
 
 ## What it does
 

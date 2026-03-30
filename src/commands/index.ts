@@ -52,15 +52,24 @@ export function discoverCustomSkills(): BotCommand[] {
       const content = readFileSync(skillFile, "utf-8");
       const { name, description } = parseSkillMd(content, dirName);
 
-      // Convert to Telegram command format (hyphens -> underscores, lowercase)
-      const command = name.replace(/-/g, "_").toLowerCase();
+      // Convert to Telegram command format:
+      // - use directory name (always safe) instead of parsed name (may have spaces)
+      // - hyphens -> underscores, strip anything not [a-z0-9_], max 32 chars
+      const command = dirName
+        .replace(/-/g, "_")
+        .toLowerCase()
+        .replace(/[^a-z0-9_]/g, "")
+        .slice(0, 32);
+
+      // Skip empty or too-short commands
+      if (!command) continue;
 
       // Skip if it collides with a built-in command
       if (BOT_COMMANDS.some((c) => c.command === command)) continue;
       if (BUILTIN_SKILL_COMMANDS.some((c) => c.command === command)) continue;
 
-      // Telegram command descriptions max 256 chars
-      const desc = description.length > 256 ? description.slice(0, 253) + "..." : description;
+      // Telegram command descriptions max 256 chars, must not be empty
+      const desc = (description.length > 256 ? description.slice(0, 253) + "..." : description) || `Custom skill: ${dirName}`;
 
       skills.push({ command, description: desc });
     } catch {
@@ -84,16 +93,16 @@ function parseSkillMd(content: string, fallbackName: string): { name: string; de
     const nameMatch = fm.match(/^name:\s*(.+)$/m);
     if (nameMatch) name = nameMatch[1].trim();
 
-    // Description can be single line or multi-line (YAML | block)
-    const descSingleMatch = fm.match(/^description:\s*(?!\|)(.+)$/m);
-    if (descSingleMatch) {
-      description = descSingleMatch[1].trim();
+    // Description: check for multi-line YAML block (|) first, then single line
+    const descBlockMatch = fm.match(/^description:\s*\|\s*\n([\s\S]*?)(?=\n[a-zA-Z][\w-]*:|\s*$)/m);
+    if (descBlockMatch) {
+      const firstLine = descBlockMatch[1].trim().split("\n")[0].trim();
+      if (firstLine) description = firstLine;
     } else {
-      const descBlockMatch = fm.match(/^description:\s*\|\s*\n([\s\S]*?)(?=\n\w|\n---)/m);
-      if (descBlockMatch) {
-        // Take first line of the block as description
-        const firstLine = descBlockMatch[1].trim().split("\n")[0].trim();
-        if (firstLine) description = firstLine;
+      const descSingleMatch = fm.match(/^description:\s*(.+)$/m);
+      if (descSingleMatch) {
+        const val = descSingleMatch[1].trim();
+        if (val && val !== "|") description = val;
       }
     }
   } else {

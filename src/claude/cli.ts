@@ -41,7 +41,9 @@ export async function invokeClaude(
     args.push("--allowedTools", ...invocation.allowedTools);
   }
 
-  if (invocation.bare ?? config.claudeBare) {
+  // --bare skips keychain/OAuth auth and only uses ANTHROPIC_API_KEY.
+  // Only enable if the API key is available, otherwise auth will fail.
+  if ((invocation.bare ?? config.claudeBare) && process.env.ANTHROPIC_API_KEY) {
     args.push("--bare");
   }
 

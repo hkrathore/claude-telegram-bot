@@ -41,9 +41,9 @@ export function loadConfig(): Config {
     throw new Error("ALLOWED_USER_IDS must contain at least one valid user ID");
   }
 
-  const claudeModel = process.env.CLAUDE_MODEL ?? "sonnet";
-  const defaultWorkingDir = process.env.WORKING_DIR ?? process.cwd();
-  const claudeBinary = process.env.CLAUDE_BINARY ?? "claude";
+  const claudeModel = process.env.CLAUDE_MODEL || "sonnet";
+  const defaultWorkingDir = process.env.WORKING_DIR || process.cwd();
+  const claudeBinary = process.env.CLAUDE_BINARY || "claude";
 
   const maxBudgetRaw = process.env.MAX_BUDGET_USD;
   const maxBudgetUsd = maxBudgetRaw ? Number(maxBudgetRaw) : undefined;
@@ -51,7 +51,7 @@ export function loadConfig(): Config {
     throw new Error(`Invalid MAX_BUDGET_USD: ${maxBudgetRaw}`);
   }
 
-  const sessionTtlMs = Number(process.env.SESSION_TTL_MS ?? String(24 * 60 * 60 * 1000));
+  const sessionTtlMs = Number(process.env.SESSION_TTL_MS || String(24 * 60 * 60 * 1000));
   if (isNaN(sessionTtlMs) || sessionTtlMs <= 0) {
     throw new Error(`Invalid SESSION_TTL_MS: ${process.env.SESSION_TTL_MS}`);
   }

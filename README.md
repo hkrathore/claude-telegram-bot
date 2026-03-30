@@ -7,7 +7,7 @@ Works in 1:1 chats and group conversations.
 ## What it does
 
 - **Chat with Claude** -- send any message, get Claude's response
-- **All Claude Code skills** available as Telegram commands (`/commit`, `/simplify`, `/humanizer`, etc.)
+- **All Claude Code skills** available as Telegram commands (`/commit`, `/simplify`, `/code_review`, etc.)
 - **Session continuity** -- conversations persist across messages (Claude remembers context)
 - **Per-chat settings** -- set model and working directory per chat
 - **Group support** -- add the bot to a group, interact via commands or @mentions
@@ -95,7 +95,6 @@ The bot will start polling for messages. Send `/start` to your bot on Telegram.
 | `/commit` | Create a git commit |
 | `/commit_push_pr` | Commit, push, and create PR |
 | `/simplify` | Review and simplify code |
-| `/humanizer` | Remove AI writing patterns |
 | `/code_review` | Review code changes |
 | `/feature_dev` | Develop a new feature |
 | `/ralph_loop` | Iterative development loop |

@@ -15,7 +15,6 @@ export const SKILL_COMMANDS: BotCommand[] = [
   { command: "commit", description: "Create a git commit" },
   { command: "commit_push_pr", description: "Commit, push, and create PR" },
   { command: "simplify", description: "Review and simplify code" },
-  { command: "humanizer", description: "Remove AI writing patterns" },
   { command: "code_review", description: "Review code changes" },
   { command: "feature_dev", description: "Develop a new feature" },
 { command: "ralph_loop", description: "Iterative development loop" },

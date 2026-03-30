@@ -35,7 +35,7 @@ The group chat angle is especially useful: create purpose-specific Telegram grou
 - **Voice messages** -- send voice notes, transcribed via OpenAI Whisper and forwarded to Claude
 - **Message queuing** -- send multiple messages while Claude is working; they queue up (max 5) and process in order
 - **File delivery** -- when Claude creates or modifies files, they're sent back to the chat as documents
-- **Cost reporting** -- each response shows the API cost
+- **Smart cost optimization** -- auto-detects casual chat vs code work and uses lightweight mode for simple questions (~10x cheaper)
 - **Image and file support** -- send photos, screenshots, or documents and Claude will analyze them
 - **Retry on error** -- if Claude errors out, hit the Retry button instead of retyping
 - **Auto-discover custom skills** -- picks up skills from `~/.claude/skills/` automatically
@@ -100,6 +100,8 @@ The bot will start polling for messages. Send `/start` to your bot on Telegram.
 | `MAX_BUDGET_USD` | No | -- | Cost cap per invocation |
 | `ALLOWED_TOOLS` | No | All | Comma-separated list of tools Claude can use |
 | `OPENAI_API_KEY` | No | -- | OpenAI API key for voice message transcription |
+| `SHOW_COST` | No | `false` | Set to `true` to show API cost after each response |
+| `CLAUDE_BARE` | No | `false` | Force lightweight mode globally (skips CLAUDE.md, hooks, plugins) |
 | `SESSION_TTL_HOURS` | No | `24` | Session expiry time |
 | `WEBHOOK_URL` | No | -- | Set to enable webhook mode (polling by default) |
 | `WEBHOOK_PORT` | No | `8443` | Port for webhook server |

@@ -18,10 +18,7 @@ export const SKILL_COMMANDS: BotCommand[] = [
   { command: "humanizer", description: "Remove AI writing patterns" },
   { command: "code_review", description: "Review code changes" },
   { command: "feature_dev", description: "Develop a new feature" },
-  { command: "resume_tailor", description: "Tailor resume for a job" },
-  { command: "linkedin_draft", description: "Draft LinkedIn content" },
-  { command: "linkedin_scrape", description: "Scrape LinkedIn profile" },
-  { command: "ralph_loop", description: "Iterative development loop" },
+{ command: "ralph_loop", description: "Iterative development loop" },
   { command: "cancel_ralph", description: "Cancel active Ralph loop" },
   { command: "clean_gone", description: "Clean up deleted branches" },
 ];

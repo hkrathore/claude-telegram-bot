@@ -2,8 +2,7 @@ import type { BotContext } from "../types.js";
 import type { Config } from "../config.js";
 import type { SessionStore } from "../claude/session-store.js";
 import { invokeClaude } from "../claude/cli.js";
-import { markdownToTelegramHtml } from "../util/format.js";
-import { chunkMessage } from "../util/chunker.js";
+import { sendClaudeResponse } from "../util/reply.js";
 import { withTyping } from "../middleware/typing.js";
 
 export function createChatHandler(config: Config, sessionStore: SessionStore) {
@@ -35,11 +34,7 @@ export function createChatHandler(config: Config, sessionStore: SessionStore) {
       });
 
       // Format and send response
-      const html = markdownToTelegramHtml(result.fullText);
-      const chunks = chunkMessage(html);
-      for (const chunk of chunks) {
-        await ctx.reply(chunk, { parse_mode: "HTML" });
-      }
+      await sendClaudeResponse(ctx, result.fullText);
     });
   };
 }

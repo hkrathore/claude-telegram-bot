@@ -93,5 +93,24 @@ export function markdownToTelegramHtml(markdown: string): string {
     (_match, idx: string) => codeBlocks[parseInt(idx, 10)],
   );
 
+  // ---- Step 5: Strip any HTML tags Telegram doesn't support ----
+  text = sanitizeTelegramHtml(text);
+
   return text;
+}
+
+const ALLOWED_TAGS = new Set(["b", "i", "u", "s", "strike", "del", "code", "pre", "a", "tg-spoiler", "blockquote"]);
+
+/**
+ * Remove any HTML tags that Telegram doesn't support.
+ * Keeps allowed tags intact, strips everything else (replacing with content).
+ */
+function sanitizeTelegramHtml(html: string): string {
+  // Match opening tags, closing tags, and self-closing tags
+  return html.replace(/<\/?([a-zA-Z][a-zA-Z0-9-]*)\b[^>]*\/?>/g, (match, tagName: string) => {
+    const tag = tagName.toLowerCase();
+    if (ALLOWED_TAGS.has(tag)) return match;
+    // Strip unsupported tag entirely (keep nothing -- the content between open/close is kept by the regex)
+    return "";
+  });
 }

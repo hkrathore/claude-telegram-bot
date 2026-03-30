@@ -33,6 +33,8 @@ The group chat angle is especially useful: create purpose-specific Telegram grou
 - **Live progress updates** -- see what Claude is doing in real time ("Using Bash...", "Using Read...")
 - **Cancel support** -- `/cancel` aborts a running operation
 - **Rate limiting** -- one active invocation per chat, no accidental spam
+- **Image and file support** -- send photos, screenshots, or documents and Claude will analyze them
+- **Retry on error** -- if Claude errors out, hit the Retry button instead of retyping
 - **Auto-discover custom skills** -- picks up skills from `~/.claude/skills/` automatically
 - **Long response handling** -- auto-chunks responses that exceed Telegram's 4096 char limit
 - **Markdown formatting** -- Claude's markdown output converted to Telegram-compatible HTML

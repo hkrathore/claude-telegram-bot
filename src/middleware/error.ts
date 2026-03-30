@@ -1,9 +1,11 @@
 import type { BotContext } from "../types.js";
 import { type NextFunction } from "grammy";
+import { retryKeyboard, storeFailedPrompt } from "./retry.js";
 
 /**
  * Error-boundary middleware. Catches any error thrown by downstream
  * middleware / handlers and replies with a user-friendly message.
+ * If the original message had text, stores it for retry and shows a Retry button.
  */
 export function errorMiddleware() {
   return async (ctx: BotContext, next: NextFunction) => {
@@ -12,9 +14,15 @@ export function errorMiddleware() {
     } catch (err) {
       console.error("Bot error:", err);
       const message = err instanceof Error ? err.message : "Unknown error";
-      await ctx.reply(`Error: ${message}`).catch(() => {
-        // If we can't even send the error, nothing more we can do
-      });
+      const chatId = ctx.chat?.id;
+      const prompt = ctx.message?.text;
+
+      if (chatId && prompt) {
+        storeFailedPrompt(chatId, prompt);
+        await ctx.reply(`Error: ${message}`, { reply_markup: retryKeyboard() }).catch(() => {});
+      } else {
+        await ctx.reply(`Error: ${message}`).catch(() => {});
+      }
     }
   };
 }

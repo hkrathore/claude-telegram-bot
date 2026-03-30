@@ -226,13 +226,39 @@ COPY . .
 CMD ["npm", "start"]
 ```
 
-### Process manager
+### Run at startup
+
+**macOS (launchd)**
 
 ```bash
-# PM2
-pm2 start npm --name claude-telegram -- start
+cp scripts/launchd.plist ~/Library/LaunchAgents/com.claude-telegram-bot.plist
+# Edit the plist to fix paths (node, tsx, project dir)
+launchctl load ~/Library/LaunchAgents/com.claude-telegram-bot.plist
+```
 
-# systemd, etc.
+**Linux (systemd)**
+
+```bash
+sudo cp scripts/systemd.service /etc/systemd/system/claude-telegram-bot.service
+# Edit the service file to fix paths and User
+sudo systemctl enable claude-telegram-bot
+sudo systemctl start claude-telegram-bot
+```
+
+**Windows (Task Scheduler)**
+
+```powershell
+# Run at logon via Task Scheduler
+schtasks /create /tn "ClaudeTelegramBot" /tr "npm start --prefix C:\path\to\claude-telegram-bot" /sc onlogon /rl highest
+```
+
+**Cross-platform (PM2)**
+
+```bash
+npm i -g pm2
+pm2 start npm --name claude-telegram -- start
+pm2 save
+pm2 startup  # generates OS-specific auto-start command
 ```
 
 ## Security

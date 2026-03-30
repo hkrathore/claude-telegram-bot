@@ -1,0 +1,20 @@
+[Unit]
+Description=Claude Telegram Bot
+After=network.target
+
+[Service]
+Type=simple
+User=YOUR_USERNAME
+WorkingDirectory=/path/to/claude-telegram-bot
+ExecStart=/usr/bin/npx tsx src/index.ts
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Environment (adjust paths as needed)
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

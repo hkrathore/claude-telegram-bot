@@ -41,6 +41,10 @@ export async function invokeClaude(
     args.push("--allowedTools", ...invocation.allowedTools);
   }
 
+  if (config.claudeBare) {
+    args.push("--bare");
+  }
+
   const budgetUsd = invocation.maxBudgetUsd ?? config.maxBudgetUsd;
   if (budgetUsd !== undefined) {
     args.push("--max-budget-usd", String(budgetUsd));

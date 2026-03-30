@@ -12,6 +12,7 @@ export interface Config {
   allowedTools: string[] | undefined;
   openaiApiKey: string | undefined;
   showCost: boolean;
+  claudeBare: boolean;
   webhook: { url: string; port: number; secret: string } | null;
 }
 
@@ -63,6 +64,7 @@ export function loadConfig(): Config {
 
   const openaiApiKey = process.env.OPENAI_API_KEY || undefined;
   const showCost = (process.env.SHOW_COST || "").toLowerCase() === "true";
+  const claudeBare = (process.env.CLAUDE_BARE || "").toLowerCase() === "true";
 
   const allowedToolsRaw = process.env.ALLOWED_TOOLS;
   const allowedTools = allowedToolsRaw
@@ -93,6 +95,7 @@ export function loadConfig(): Config {
     allowedTools,
     openaiApiKey,
     showCost,
+    claudeBare,
     webhook,
   };
 }

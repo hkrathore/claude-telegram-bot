@@ -4,6 +4,23 @@ A Telegram bot that bridges to [Claude Code](https://docs.anthropic.com/en/docs/
 
 Works in 1:1 chats and group conversations.
 
+## Why not just use the Claude mobile app?
+
+The Claude mobile app is great for conversations. This bot does something different -- it connects to **Claude Code CLI** running on your machine, which means:
+
+| | Claude Mobile App | This Bot |
+|---|---|---|
+| Runs code on your machine | No | Yes -- executes Bash, reads/writes files |
+| Git operations | No | Yes -- `/commit`, `/commit_push_pr`, `/code_review` |
+| Access to your codebase | No | Yes -- Claude sees your actual project files |
+| Custom skills | No | Yes -- auto-discovers `~/.claude/skills/` |
+| Working directory control | No | Yes -- `/workdir` targets any local project |
+| Group collaboration | No | Yes -- add to a Telegram group, share one Claude session |
+| Tool use (Read, Edit, Grep, etc.) | No | Yes -- full Claude Code tool suite |
+| Works offline from Anthropic's servers | No | No (both need API access) |
+
+In short: the Claude app is a chat interface. This bot is a **remote control for Claude Code** that happens to live in Telegram. You can trigger builds, review PRs, commit code, and run custom workflows -- all from your phone.
+
 ## What it does
 
 - **Chat with Claude** -- send any message, get Claude's response

@@ -1,0 +1,12 @@
+[    6568ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://www.googletagmanager.com/gtm.js?id=GTM-NDBTLD:0
+[    6569ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://platform-api.sharethis.com/js/sharethis.js#property=648c61279c28110012954dd9&product=sop:0
+[    7867ms] [WARNING] No elements with class "mobile-exp" found. @ https://www.gulftalent.com/jobs?q=Head+of+Engineering+OR+Director+of+Engineering+OR+VP+Engineering+OR+Head+of+Data&country=UAE:1705
+[    8505ms] [WARNING] An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing. @ https://apis.google.com/_/scs/abc-static/_/js/k=gapi.lb.en.PJsh2cctCQI.O/m=auth2/rt=j/sv=1/d=1/ed=1/rs=AHpOoo_QlMhY2cycn60Rs8eI1WInRwuahw/cb=gapi.loaded_0?le=scs,fedcm_migration_mod:191
+[    8609ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://platform-cdn.sharethis.com/img/email.svg:0
+[    8696ms] [ERROR] ReferenceError: google is not defined
+    at d (https://www.gulftalent.com/encore/9423.65b6a176.js:1:11909)
+    at https://www.gulftalent.com/encore/7859.c51282e9.js:2:114735
+    at p (https://www.gulftalent.com/encore/7859.c51282e9.js:2:30868)
+    at https://www.gulftalent.com/encore/7859.c51282e9.js:2:32207 @ https://www.gulftalent.com/encore/7859.c51282e9.js:1
+[   10028ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://accounts.google.com/_/IdpIFrameHttp/cspreport/fine-allowlist:0
+[   11344ms] [WARNING] Your client application uses libraries for user authentication or authorization that are deprecated. See the [Migration Guide](https://developers.google.com/identity/gsi/web/guides/gis-migration) for more information. @ https://apis.google.com/_/scs/abc-static/_/js/k=gapi.lb.en.PJsh2cctCQI.O/m=auth2/rt=j/sv=1/d=1/ed=1/rs=AHpOoo_QlMhY2cycn60Rs8eI1WInRwuahw/cb=gapi.loaded_0?le=scs,fedcm_migration_mod:171

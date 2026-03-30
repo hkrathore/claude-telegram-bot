@@ -1,0 +1,7 @@
+[    1583ms] [ERROR] Failed to load resource: net::ERR_NAME_NOT_RESOLVED @ https://www.googletagmanager.com/gtm.js?id=GTM-NW36N4:0
+[    1589ms] [ERROR] ReferenceError: ConfirmationEmailForJs is not defined
+    at https://www.bayt.com/en/uae/jobs/head-of-engineering-jobs/:1803:573
+    at https://secure.b8cdn.com/bayt/assets/baytui-dv9vpvf8/js/B8com.es6.js:3:24334
+    at Ht (https://secure.b8cdn.com/bayt/assets/baytui-dv9vpvf8/js/B8com.es6.js:3:24346) @ https://www.bayt.com/en/uae/jobs/head-of-engineering-jobs/:1802
+[    1799ms] [ERROR] Not signed in with the identity provider. @ https://www.bayt.com/en/uae/jobs/head-of-engineering-jobs/:0
+[   14218ms] [ERROR] [GSI_LOGGER]: FedCM get() rejects with NetworkError: Error retrieving a token. @ https://accounts.google.com/gsi/client:81

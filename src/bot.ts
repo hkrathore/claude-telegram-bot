@@ -12,6 +12,7 @@ import { createModelCommand } from "./commands/model.js";
 import { createWorkdirCommand } from "./commands/workdir.js";
 import { createSessionCommand } from "./commands/session.js";
 import { SKILL_COMMANDS } from "./commands/index.js";
+import { cancelInvocation } from "./state.js";
 
 export function createBot(config: Config): Bot<BotContext> {
   const bot = new Bot<BotContext>(config.telegramToken);
@@ -28,9 +29,15 @@ export function createBot(config: Config): Bot<BotContext> {
   bot.command("workdir", createWorkdirCommand(config, sessionStore));
   bot.command("session", createSessionCommand(sessionStore));
 
-  // Cancel: abort running Claude process (placeholder - needs active process tracking)
+  // Cancel: abort running Claude process
   bot.command("cancel", async (ctx) => {
-    await ctx.reply("No operation currently running.");
+    const chatId = ctx.chat!.id;
+    const cancelled = cancelInvocation(chatId);
+    if (cancelled) {
+      await ctx.reply("Cancelled.");
+    } else {
+      await ctx.reply("No operation currently running.");
+    }
   });
 
   // Register all skill commands

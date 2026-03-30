@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import { createInterface } from "node:readline";
-import { loadConfig } from "../config.js";
+import type { Config } from "../config.js";
 import type {
   ClaudeInvocation,
   ClaudeStreamEvent,
@@ -16,10 +16,10 @@ import type {
  * into simplified ClaudeStreamEvent objects for the bot layer.
  */
 export async function invokeClaude(
+  config: Config,
   invocation: ClaudeInvocation,
   onEvent: (event: ClaudeStreamEvent) => void,
 ): Promise<{ fullText: string; sessionId: string; costUsd?: number }> {
-  const config = loadConfig();
   const model = invocation.model ?? config.claudeModel;
   const binary = config.claudeBinary;
 

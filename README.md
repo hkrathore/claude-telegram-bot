@@ -11,6 +11,9 @@ Works in 1:1 chats and group conversations.
 - **Session continuity** -- conversations persist across messages (Claude remembers context)
 - **Per-chat settings** -- set model and working directory per chat
 - **Group support** -- add the bot to a group, interact via commands or @mentions
+- **Live progress updates** -- see what Claude is doing in real time ("Using Bash...", "Using Read...")
+- **Cancel support** -- `/cancel` aborts a running operation
+- **Rate limiting** -- one active invocation per chat, no accidental spam
 - **Long response handling** -- auto-chunks responses that exceed Telegram's 4096 char limit
 - **Markdown formatting** -- Claude's markdown output converted to Telegram-compatible HTML
 

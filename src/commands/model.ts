@@ -14,7 +14,7 @@ export function createModelCommand(config: Config, sessionStore: SessionStore) {
       const session = sessionStore.get(chatId);
       const current = session?.model ?? config.claudeModel;
       await ctx.reply(
-        `Current model: <b>${current}</b>\n\nUsage: /model <${VALID_MODELS.join("|")}>`,
+        `Current model: <b>${current}</b>\n\nUsage: /model [${VALID_MODELS.join(" | ")}]`,
         { parse_mode: "HTML" }
       );
       return;

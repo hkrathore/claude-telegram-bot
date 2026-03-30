@@ -95,6 +95,7 @@ The bot will start polling for messages. Send `/start` to your bot on Telegram.
 | `ALLOWED_WORKDIR_BASE` | No | -- | Restrict `/workdir` to this base path (security) |
 | `CLAUDE_BINARY` | No | `claude` | Path to Claude CLI binary |
 | `MAX_BUDGET_USD` | No | -- | Cost cap per invocation |
+| `ALLOWED_TOOLS` | No | All | Comma-separated list of tools Claude can use |
 | `SESSION_TTL_HOURS` | No | `24` | Session expiry time |
 | `WEBHOOK_URL` | No | -- | Set to enable webhook mode (polling by default) |
 | `WEBHOOK_PORT` | No | `8443` | Port for webhook server |
@@ -144,14 +145,17 @@ src/
 ├── index.ts              # Entry point (polling or webhook)
 ├── bot.ts                # Bot instance + middleware chain
 ├── config.ts             # Environment config loader
+├── state.ts              # Per-chat active invocation tracking
 ├── claude/
 │   ├── cli.ts            # Spawns Claude CLI, parses stream-json
+│   ├── invoke.ts         # Shared invoke-and-respond flow
 │   ├── session-store.ts  # Chat ID → Claude session mapping
 │   └── types.ts          # CLI output types
 ├── commands/
-│   ├── index.ts          # Command registry
+│   ├── index.ts          # Command registry + skill auto-discovery
 │   ├── chat.ts           # Freeform message handler
 │   ├── skills.ts         # Skill command passthrough
+│   ├── media.ts          # Photo and document handler
 │   ├── start.ts          # /start
 │   ├── help.ts           # /help
 │   ├── model.ts          # /model
@@ -160,7 +164,8 @@ src/
 ├── middleware/
 │   ├── auth.ts           # User allowlist
 │   ├── typing.ts         # Typing indicator refresh
-│   └── error.ts          # Error boundary
+│   ├── error.ts          # Error boundary + retry button
+│   └── retry.ts          # Failed prompt storage for retry
 └── util/
     ├── format.ts         # Markdown → Telegram HTML
     ├── chunker.ts        # Message splitting (4096 char limit)

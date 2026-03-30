@@ -1,4 +1,5 @@
-import "dotenv/config";
+import { config as loadDotenv } from "dotenv";
+loadDotenv({ override: true });
 
 export interface Config {
   telegramToken: string;

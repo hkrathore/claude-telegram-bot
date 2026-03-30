@@ -151,6 +151,7 @@ src/
 ├── index.ts              # Entry point (polling or webhook)
 ├── bot.ts                # Bot instance + middleware chain
 ├── config.ts             # Environment config loader
+├── types.ts              # Shared types (BotContext, BotCommand)
 ├── state.ts              # Per-chat active invocation tracking
 ├── claude/
 │   ├── cli.ts            # Spawns Claude CLI, parses stream-json

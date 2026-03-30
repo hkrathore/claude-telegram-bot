@@ -92,6 +92,7 @@ The bot will start polling for messages. Send `/start` to your bot on Telegram.
 | `ALLOWED_USER_IDS` | Yes | -- | Comma-separated Telegram user IDs |
 | `CLAUDE_MODEL` | No | `sonnet` | Default model (`sonnet`, `opus`, `haiku`) |
 | `DEFAULT_WORKING_DIR` | No | Current dir | Working directory for Claude operations |
+| `ALLOWED_WORKDIR_BASE` | No | -- | Restrict `/workdir` to this base path (security) |
 | `CLAUDE_BINARY` | No | `claude` | Path to Claude CLI binary |
 | `MAX_BUDGET_USD` | No | -- | Cost cap per invocation |
 | `SESSION_TTL_HOURS` | No | `24` | Session expiry time |
@@ -223,8 +224,10 @@ pm2 start npm --name claude-telegram -- start
 ## Security
 
 - **Allowlist-only**: Only Telegram user IDs in `ALLOWED_USER_IDS` can interact
+- **Workdir sandboxing**: Set `ALLOWED_WORKDIR_BASE` to restrict `/workdir` to a specific directory tree (e.g. `/home/user/projects`). Prevents users from pointing Claude at `/etc` or other sensitive paths
 - **Budget cap**: Set `MAX_BUDGET_USD` to limit per-invocation cost
 - **Tool permissions**: Configure `ALLOWED_TOOLS` to restrict what Claude can do
+- **Graceful shutdown**: Bot cleanly stops polling on SIGINT/SIGTERM
 - **No secrets in code**: All config via environment variables
 
 ## License

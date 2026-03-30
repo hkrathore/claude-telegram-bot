@@ -5,6 +5,7 @@ export interface Config {
   allowedUserIds: Set<number>;
   claudeModel: string;
   defaultWorkingDir: string;
+  allowedWorkdirBase: string | undefined;
   maxBudgetUsd: number | undefined;
   sessionTtlMs: number;
   claudeBinary: string;
@@ -42,7 +43,8 @@ export function loadConfig(): Config {
   }
 
   const claudeModel = process.env.CLAUDE_MODEL || "sonnet";
-  const defaultWorkingDir = process.env.WORKING_DIR || process.cwd();
+  const defaultWorkingDir = process.env.DEFAULT_WORKING_DIR || process.cwd();
+  const allowedWorkdirBase = process.env.ALLOWED_WORKDIR_BASE || undefined;
   const claudeBinary = process.env.CLAUDE_BINARY || "claude";
 
   const maxBudgetRaw = process.env.MAX_BUDGET_USD;
@@ -79,6 +81,7 @@ export function loadConfig(): Config {
     allowedUserIds,
     claudeModel,
     defaultWorkingDir,
+    allowedWorkdirBase,
     maxBudgetUsd,
     sessionTtlMs,
     claudeBinary,

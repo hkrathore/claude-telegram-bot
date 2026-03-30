@@ -1,7 +1,8 @@
+import { resolve } from "node:path";
+import { existsSync } from "node:fs";
 import type { BotContext } from "../types.js";
 import type { Config } from "../config.js";
 import type { SessionStore } from "../claude/session-store.js";
-import { existsSync } from "node:fs";
 
 export function createWorkdirCommand(config: Config, sessionStore: SessionStore) {
   return async (ctx: BotContext) => {
@@ -12,13 +13,28 @@ export function createWorkdirCommand(config: Config, sessionStore: SessionStore)
       const chatId = ctx.chat!.id;
       const session = sessionStore.get(chatId);
       const current = session?.workingDir ?? config.defaultWorkingDir;
-      await ctx.reply(`Current working directory: <code>${current}</code>\n\nUsage: /workdir /path/to/dir`, { parse_mode: "HTML" });
+      let info = `Current working directory: <code>${current}</code>\n\nUsage: /workdir /path/to/dir`;
+      if (config.allowedWorkdirBase) {
+        info += `\nRestricted to: <code>${config.allowedWorkdirBase}</code>`;
+      }
+      await ctx.reply(info, { parse_mode: "HTML" });
       return;
     }
 
-    if (!existsSync(args)) {
+    const resolved = resolve(args);
+
+    if (!existsSync(resolved)) {
       await ctx.reply(`Directory not found: ${args}`);
       return;
+    }
+
+    // Security: enforce allowed base directory
+    if (config.allowedWorkdirBase) {
+      const base = resolve(config.allowedWorkdirBase);
+      if (!resolved.startsWith(base + "/") && resolved !== base) {
+        await ctx.reply(`Denied. Working directory must be under <code>${base}</code>`, { parse_mode: "HTML" });
+        return;
+      }
     }
 
     const chatId = ctx.chat!.id;
@@ -26,10 +42,10 @@ export function createWorkdirCommand(config: Config, sessionStore: SessionStore)
     sessionStore.set(chatId, {
       claudeSessionId: session?.claudeSessionId ?? null,
       model: session?.model ?? config.claudeModel,
-      workingDir: args,
+      workingDir: resolved,
       lastActivity: Date.now(),
     });
 
-    await ctx.reply(`Working directory set to <code>${args}</code>`, { parse_mode: "HTML" });
+    await ctx.reply(`Working directory set to <code>${resolved}</code>`, { parse_mode: "HTML" });
   };
 }

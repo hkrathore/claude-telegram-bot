@@ -1,4 +1,4 @@
-import { createServer } from "node:http";
+import { createServer, type Server } from "node:http";
 import { webhookCallback } from "grammy";
 import { loadConfig } from "./config.js";
 import { createBot } from "./bot.js";
@@ -12,10 +12,21 @@ async function main() {
   await bot.api.setMyCommands(ALL_COMMANDS);
   console.log(`Registered ${ALL_COMMANDS.length} commands with BotFather`);
 
+  // Graceful shutdown
+  let server: Server | undefined;
+  const shutdown = () => {
+    console.log("\nShutting down...");
+    bot.stop();
+    server?.close();
+    process.exit(0);
+  };
+  process.once("SIGINT", shutdown);
+  process.once("SIGTERM", shutdown);
+
   if (config.webhook) {
     // Webhook mode
     const { url, port, secret } = config.webhook;
-    const server = createServer(webhookCallback(bot, "http", { secretToken: secret }));
+    server = createServer(webhookCallback(bot, "http", { secretToken: secret }));
     server.listen(port, () => {
       console.log(`Webhook server listening on port ${port}`);
     });

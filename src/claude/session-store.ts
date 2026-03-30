@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { homedir } from "node:os";
 
 export interface SessionEntry {
-  claudeSessionId: string;
+  claudeSessionId: string | null;
   model: string;
   workingDir: string;
   lastActivity: number;

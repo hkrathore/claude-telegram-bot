@@ -41,7 +41,7 @@ export async function invokeClaude(
     args.push("--allowedTools", ...invocation.allowedTools);
   }
 
-  if (config.claudeBare) {
+  if (invocation.bare ?? config.claudeBare) {
     args.push("--bare");
   }
 

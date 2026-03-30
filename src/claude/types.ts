@@ -9,6 +9,7 @@ export interface ClaudeInvocation {
   allowedTools?: string[];
   maxBudgetUsd?: number;
   abortSignal?: AbortSignal;
+  bare?: boolean;
 }
 
 /**

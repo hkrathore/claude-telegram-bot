@@ -12,6 +12,7 @@ interface InvokeOptions {
   config: Config;
   sessionStore: SessionStore;
   prompt: string;
+  bare?: boolean;
 }
 
 /**
@@ -24,6 +25,8 @@ interface InvokeOptions {
 export async function invokeAndRespond(opts: InvokeOptions): Promise<void> {
   const { ctx, config, sessionStore, prompt } = opts;
   const chatId = ctx.chat!.id;
+
+  const bare = opts.bare;
 
   if (isActive(chatId)) {
     const queued = enqueueMessage(chatId, prompt);
@@ -38,7 +41,7 @@ export async function invokeAndRespond(opts: InvokeOptions): Promise<void> {
     // We need to run ourselves now via processPrompt.
   }
 
-  await processPrompt(ctx, config, sessionStore, chatId, prompt);
+  await processPrompt(ctx, config, sessionStore, chatId, prompt, bare);
 }
 
 async function processPrompt(
@@ -47,6 +50,7 @@ async function processPrompt(
   sessionStore: SessionStore,
   chatId: number,
   prompt: string,
+  bare?: boolean,
 ): Promise<void> {
   const session = sessionStore.get(chatId);
   const controller = startInvocation(chatId);
@@ -64,6 +68,7 @@ async function processPrompt(
         allowedTools: config.allowedTools,
         maxBudgetUsd: config.maxBudgetUsd,
         abortSignal: controller.signal,
+        bare,
       }, async (event) => {
         if (event.type === "tool_use" && event.tool !== lastProgressTool) {
           lastProgressTool = event.tool;

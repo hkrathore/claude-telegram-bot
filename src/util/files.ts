@@ -45,7 +45,7 @@ export async function sendOutputFiles(ctx: BotContext, text: string): Promise<vo
 function extractFilePaths(text: string): string[] {
   const patterns = [
     // "Created/Wrote/Saved/Output file at /path" patterns
-    /(?:creat|wrot|sav|generat|output|produc|export|download)(?:ed|ing)?\s+(?:file\s+)?(?:at|to|in|:)\s+(\/\S+)/gi,
+    /(?:creat|wro?t|sav|generat|output|produc|export|download)(?:ed?|ing|e)?\s+(?:file\s+)?(?:at|to|in|:)\s+(\/\S+)/gi,
     // "File: /path" or "Path: /path"
     /(?:file|path|output):\s*(\/\S+)/gi,
     // Backtick-wrapped absolute paths

@@ -3,8 +3,9 @@ import type { Config } from "../config.js";
 import type { SessionStore } from "./session-store.js";
 import { invokeClaude } from "./cli.js";
 import { sendClaudeResponse } from "../util/reply.js";
+import { sendOutputFiles } from "../util/files.js";
 import { withTyping } from "../middleware/typing.js";
-import { startInvocation, clearInvocation, isActive } from "../state.js";
+import { startInvocation, clearInvocation, isActive, enqueueMessage, dequeueMessage, queueSize } from "../state.js";
 
 interface InvokeOptions {
   ctx: BotContext;
@@ -15,20 +16,38 @@ interface InvokeOptions {
 
 /**
  * Shared invoke-and-respond flow used by chat, skills, media, and retry.
- * Handles: rate limiting, typing indicator, progress messages,
- * session persistence, response formatting, and cleanup.
+ * Handles: queuing, typing indicator, progress messages,
+ * session persistence, response formatting, cost reporting, and cleanup.
  *
- * Returns false if the chat was already busy (rate limited).
+ * If the chat is busy, queues the message (up to 5) instead of rejecting.
  */
-export async function invokeAndRespond(opts: InvokeOptions): Promise<boolean> {
+export async function invokeAndRespond(opts: InvokeOptions): Promise<void> {
   const { ctx, config, sessionStore, prompt } = opts;
   const chatId = ctx.chat!.id;
 
   if (isActive(chatId)) {
-    await ctx.reply("Already processing a request. Use /cancel to abort it.");
-    return false;
+    const queued = enqueueMessage(chatId, prompt);
+    if (queued === null) {
+      await ctx.reply("Queue full (max 5). Wait for current requests to finish.");
+      return;
+    }
+    const pos = queueSize(chatId);
+    await ctx.reply(`Queued (position ${pos}). Will process after current request.`);
+    await queued; // wait until dequeued
+    // When we get here, the previous invocation has finished and dequeued us.
+    // We need to run ourselves now via processPrompt.
   }
 
+  await processPrompt(ctx, config, sessionStore, chatId, prompt);
+}
+
+async function processPrompt(
+  ctx: BotContext,
+  config: Config,
+  sessionStore: SessionStore,
+  chatId: number,
+  prompt: string,
+): Promise<void> {
   const session = sessionStore.get(chatId);
   const controller = startInvocation(chatId);
 
@@ -72,10 +91,28 @@ export async function invokeAndRespond(opts: InvokeOptions): Promise<boolean> {
       }
 
       await sendClaudeResponse(ctx, result.fullText);
-    });
 
-    return true;
+      // Send any output files Claude created/mentioned
+      await sendOutputFiles(ctx, result.fullText);
+
+      // Append cost footer if available
+      if (result.costUsd !== undefined && result.costUsd > 0) {
+        const cost = result.costUsd < 0.01
+          ? `$${result.costUsd.toFixed(4)}`
+          : `$${result.costUsd.toFixed(2)}`;
+        await ctx.reply(`Cost: ${cost}`, { parse_mode: "HTML" }).catch(() => {});
+      }
+    });
   } finally {
     clearInvocation(chatId);
+
+    // Process next queued message if any
+    const nextPrompt = dequeueMessage(chatId);
+    if (nextPrompt) {
+      // Run asynchronously so we don't block the current handler's cleanup
+      processPrompt(ctx, config, sessionStore, chatId, nextPrompt).catch((err) => {
+        console.error("Error processing queued message:", err);
+      });
+    }
   }
 }

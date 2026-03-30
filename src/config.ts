@@ -10,6 +10,7 @@ export interface Config {
   sessionTtlMs: number;
   claudeBinary: string;
   allowedTools: string[] | undefined;
+  openaiApiKey: string | undefined;
   webhook: { url: string; port: number; secret: string } | null;
 }
 
@@ -59,6 +60,8 @@ export function loadConfig(): Config {
   }
   const sessionTtlMs = sessionTtlHours * 60 * 60 * 1000;
 
+  const openaiApiKey = process.env.OPENAI_API_KEY || undefined;
+
   const allowedToolsRaw = process.env.ALLOWED_TOOLS;
   const allowedTools = allowedToolsRaw
     ? allowedToolsRaw.split(",").map((t) => t.trim()).filter(Boolean)
@@ -86,6 +89,7 @@ export function loadConfig(): Config {
     sessionTtlMs,
     claudeBinary,
     allowedTools,
+    openaiApiKey,
     webhook,
   };
 }

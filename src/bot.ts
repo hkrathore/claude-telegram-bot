@@ -11,6 +11,7 @@ import { helpCommand } from "./commands/help.js";
 import { createChatHandler } from "./commands/chat.js";
 import { createSkillHandler } from "./commands/skills.js";
 import { createMediaHandler } from "./commands/media.js";
+import { createVoiceHandler } from "./commands/voice.js";
 import { createModelCommand } from "./commands/model.js";
 import { createWorkdirCommand } from "./commands/workdir.js";
 import { createSessionCommand } from "./commands/session.js";
@@ -65,6 +66,11 @@ export function createBot(config: Config): Bot<BotContext> {
 
     await invokeAndRespond({ ctx, config, sessionStore, prompt });
   });
+
+  // Voice message handler
+  const voiceHandler = createVoiceHandler(config, sessionStore);
+  bot.on("message:voice", voiceHandler);
+  bot.on("message:audio", voiceHandler);
 
   // Photo and document handler
   const mediaHandler = createMediaHandler(config, sessionStore);

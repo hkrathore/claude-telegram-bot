@@ -32,7 +32,10 @@ The group chat angle is especially useful: create purpose-specific Telegram grou
 - **Group support** -- add the bot to a group, interact via commands or @mentions
 - **Live progress updates** -- see what Claude is doing in real time ("Using Bash...", "Using Read...")
 - **Cancel support** -- `/cancel` aborts a running operation
-- **Rate limiting** -- one active invocation per chat, no accidental spam
+- **Voice messages** -- send voice notes, transcribed via OpenAI Whisper and forwarded to Claude
+- **Message queuing** -- send multiple messages while Claude is working; they queue up (max 5) and process in order
+- **File delivery** -- when Claude creates or modifies files, they're sent back to the chat as documents
+- **Cost reporting** -- each response shows the API cost
 - **Image and file support** -- send photos, screenshots, or documents and Claude will analyze them
 - **Retry on error** -- if Claude errors out, hit the Retry button instead of retyping
 - **Auto-discover custom skills** -- picks up skills from `~/.claude/skills/` automatically
@@ -96,6 +99,7 @@ The bot will start polling for messages. Send `/start` to your bot on Telegram.
 | `CLAUDE_BINARY` | No | `claude` | Path to Claude CLI binary |
 | `MAX_BUDGET_USD` | No | -- | Cost cap per invocation |
 | `ALLOWED_TOOLS` | No | All | Comma-separated list of tools Claude can use |
+| `OPENAI_API_KEY` | No | -- | OpenAI API key for voice message transcription |
 | `SESSION_TTL_HOURS` | No | `24` | Session expiry time |
 | `WEBHOOK_URL` | No | -- | Set to enable webhook mode (polling by default) |
 | `WEBHOOK_PORT` | No | `8443` | Port for webhook server |
@@ -156,6 +160,7 @@ src/
 │   ├── chat.ts           # Freeform message handler
 │   ├── skills.ts         # Skill command passthrough
 │   ├── media.ts          # Photo and document handler
+│   ├── voice.ts          # Voice message transcription + handler
 │   ├── start.ts          # /start
 │   ├── help.ts           # /help
 │   ├── model.ts          # /model
@@ -169,7 +174,8 @@ src/
 └── util/
     ├── format.ts         # Markdown → Telegram HTML
     ├── chunker.ts        # Message splitting (4096 char limit)
-    └── reply.ts          # Send with HTML fallback
+    ├── reply.ts          # Send with HTML fallback
+    └── files.ts          # Detect and send output files back to chat
 ```
 
 ### How it works

@@ -90,18 +90,19 @@ async function processPrompt(
         await ctx.api.deleteMessage(chatId, progressMsgId).catch(() => {});
       }
 
-      await sendClaudeResponse(ctx, result.fullText);
-
-      // Send any output files Claude created/mentioned
-      await sendOutputFiles(ctx, result.fullText);
-
-      // Append cost footer if available
-      if (result.costUsd !== undefined && result.costUsd > 0) {
+      // Append cost inline if enabled
+      let responseText = result.fullText;
+      if (config.showCost && result.costUsd !== undefined && result.costUsd > 0) {
         const cost = result.costUsd < 0.01
           ? `$${result.costUsd.toFixed(4)}`
           : `$${result.costUsd.toFixed(2)}`;
-        await ctx.reply(`Cost: ${cost}`, { parse_mode: "HTML" }).catch(() => {});
+        responseText += `\n\n_Cost: ${cost}_`;
       }
+
+      await sendClaudeResponse(ctx, responseText);
+
+      // Send any output files Claude created/mentioned
+      await sendOutputFiles(ctx, result.fullText);
     });
   } finally {
     clearInvocation(chatId);

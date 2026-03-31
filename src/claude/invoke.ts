@@ -69,6 +69,7 @@ async function processPrompt(
         maxBudgetUsd: config.maxBudgetUsd,
         abortSignal: controller.signal,
         bare,
+        effort: session?.effort,
       }, async (event) => {
         if (event.type === "tool_use" && event.tool !== lastProgressTool) {
           lastProgressTool = event.tool;
@@ -89,6 +90,7 @@ async function processPrompt(
         model: session?.model ?? config.claudeModel,
         workingDir: session?.workingDir ?? config.defaultWorkingDir,
         lastActivity: Date.now(),
+        effort: session?.effort,
       });
 
       if (progressMsgId) {

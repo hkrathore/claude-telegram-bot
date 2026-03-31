@@ -28,7 +28,7 @@ The group chat angle is especially useful: create purpose-specific Telegram grou
 - **Chat with Claude**: send any message, get Claude's response
 - **All Claude Code skills** available as Telegram commands (`/commit`, `/simplify`, `/code_review`, etc.)
 - **Session continuity**: conversations persist across messages (Claude remembers context)
-- **Per-chat settings**: set model and working directory per chat
+- **Per-chat settings**: set model, effort level, and working directory per chat
 - **Group support**: add the bot to a group, interact via commands or @mentions
 - **Live progress updates**: see what Claude is doing in real time ("Using Bash...", "Using Read...")
 - **Cancel support**: `/cancel` aborts a running operation
@@ -116,10 +116,12 @@ The bot will start polling for messages. Send `/start` to your bot on Telegram.
 | `/start` | Welcome message |
 | `/help` | List all commands |
 | `/model <name>` | Switch model (sonnet/opus/haiku) |
+| `/effort <level>` | Set effort level (low/medium/high/max/auto) |
 | `/workdir <path>` | Set working directory |
 | `/session new` | Start fresh conversation |
 | `/session` | Show current session info |
 | `/cancel` | Cancel running operation |
+| `/compact` | Compress conversation context (frees up context window) |
 
 ### Claude Code skills
 
@@ -162,6 +164,8 @@ src/
 │   ├── index.ts          # Command registry + skill auto-discovery
 │   ├── chat.ts           # Freeform message handler
 │   ├── skills.ts         # Skill command passthrough
+│   ├── cli-commands.ts   # CLI slash command passthrough (/compact)
+│   ├── effort.ts         # /effort
 │   ├── media.ts          # Photo and document handler
 │   ├── voice.ts          # Voice message transcription + handler
 │   ├── start.ts          # /start

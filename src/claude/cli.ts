@@ -33,6 +33,10 @@ export async function invokeClaude(
     model,
   ];
 
+  if (invocation.effort) {
+    args.push("--effort", invocation.effort);
+  }
+
   if (invocation.sessionId) {
     args.push("--resume", invocation.sessionId);
   }

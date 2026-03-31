@@ -44,6 +44,7 @@ export function createWorkdirCommand(config: Config, sessionStore: SessionStore)
       model: session?.model ?? config.claudeModel,
       workingDir: resolved,
       lastActivity: Date.now(),
+      effort: session?.effort,
     });
 
     await ctx.reply(`Working directory set to <code>${resolved}</code>`, { parse_mode: "HTML" });

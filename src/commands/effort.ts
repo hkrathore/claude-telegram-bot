@@ -2,27 +2,27 @@ import type { BotContext } from "../types.js";
 import type { Config } from "../config.js";
 import type { SessionStore } from "../claude/session-store.js";
 
-const VALID_MODELS = ["sonnet", "opus", "haiku"];
+const VALID_EFFORTS = ["low", "medium", "high", "max", "auto"];
 
-export function createModelCommand(config: Config, sessionStore: SessionStore) {
+export function createEffortCommand(config: Config, sessionStore: SessionStore) {
   return async (ctx: BotContext) => {
     const text = ctx.message?.text ?? "";
-    const args = text.replace(/^\/model(?:@\w+)?\s*/, "").trim();
+    const args = text.replace(/^\/effort(?:@\w+)?\s*/, "").trim();
 
     if (!args) {
       const chatId = ctx.chat!.id;
       const session = sessionStore.get(chatId);
-      const current = session?.model ?? config.claudeModel;
+      const current = session?.effort ?? "auto";
       await ctx.reply(
-        `Current model: <b>${current}</b>\n\nUsage: /model [${VALID_MODELS.join(" | ")}]`,
+        `Current effort: <b>${current}</b>\n\nUsage: /effort [${VALID_EFFORTS.join(" | ")}]`,
         { parse_mode: "HTML" }
       );
       return;
     }
 
-    const model = args.toLowerCase();
-    if (!VALID_MODELS.includes(model)) {
-      await ctx.reply(`Invalid model. Choose from: ${VALID_MODELS.join(", ")}`);
+    const effort = args.toLowerCase();
+    if (!VALID_EFFORTS.includes(effort)) {
+      await ctx.reply(`Invalid effort level. Choose from: ${VALID_EFFORTS.join(", ")}`);
       return;
     }
 
@@ -30,12 +30,12 @@ export function createModelCommand(config: Config, sessionStore: SessionStore) {
     const session = sessionStore.get(chatId);
     sessionStore.set(chatId, {
       claudeSessionId: session?.claudeSessionId ?? null,
-      model,
+      model: session?.model ?? config.claudeModel,
       workingDir: session?.workingDir ?? config.defaultWorkingDir,
       lastActivity: Date.now(),
-      effort: session?.effort,
+      effort,
     });
 
-    await ctx.reply(`Model switched to <b>${model}</b>`, { parse_mode: "HTML" });
+    await ctx.reply(`Effort level set to <b>${effort}</b>`, { parse_mode: "HTML" });
   };
 }

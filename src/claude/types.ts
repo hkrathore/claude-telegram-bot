@@ -10,6 +10,7 @@ export interface ClaudeInvocation {
   maxBudgetUsd?: number;
   abortSignal?: AbortSignal;
   bare?: boolean;
+  effort?: string;
 }
 
 /**

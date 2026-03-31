@@ -15,6 +15,8 @@ import { createVoiceHandler } from "./commands/voice.js";
 import { createModelCommand } from "./commands/model.js";
 import { createWorkdirCommand } from "./commands/workdir.js";
 import { createSessionCommand } from "./commands/session.js";
+import { createEffortCommand } from "./commands/effort.js";
+import { createCompactCommand } from "./commands/cli-commands.js";
 import { SKILL_COMMANDS } from "./commands/index.js";
 import { cancelInvocation } from "./state.js";
 
@@ -30,8 +32,10 @@ export function createBot(config: Config): Bot<BotContext> {
   bot.command("start", startCommand);
   bot.command("help", helpCommand);
   bot.command("model", createModelCommand(config, sessionStore));
+  bot.command("effort", createEffortCommand(config, sessionStore));
   bot.command("workdir", createWorkdirCommand(config, sessionStore));
   bot.command("session", createSessionCommand(sessionStore));
+  bot.command("compact", createCompactCommand(config, sessionStore));
 
   // Cancel: abort running Claude process
   bot.command("cancel", async (ctx) => {

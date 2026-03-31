@@ -8,9 +8,11 @@ export const BOT_COMMANDS: BotCommand[] = [
   { command: "start", description: "Start the bot" },
   { command: "help", description: "Show available commands" },
   { command: "model", description: "Switch Claude model (sonnet/opus/haiku)" },
+  { command: "effort", description: "Set effort level (low/medium/high/max/auto)" },
   { command: "workdir", description: "Set working directory" },
   { command: "session", description: "Manage sessions (new/continue)" },
   { command: "cancel", description: "Cancel running operation" },
+  { command: "compact", description: "Compress conversation context" },
 ];
 
 // Built-in Claude Code skill commands (underscores because Telegram doesn't allow hyphens)

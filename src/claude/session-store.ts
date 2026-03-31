@@ -7,6 +7,7 @@ export interface SessionEntry {
   model: string;
   workingDir: string;
   lastActivity: number;
+  effort?: string;
 }
 
 const STORE_DIR = join(homedir(), ".claude-telegram-bot");

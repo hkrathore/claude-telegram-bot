@@ -25,9 +25,11 @@ describe("BOT_COMMANDS", () => {
     expect(commands).toContain("start");
     expect(commands).toContain("help");
     expect(commands).toContain("model");
+    expect(commands).toContain("effort");
     expect(commands).toContain("workdir");
     expect(commands).toContain("session");
     expect(commands).toContain("cancel");
+    expect(commands).toContain("compact");
   });
 
   it("has no command names containing hyphens", () => {

@@ -70,8 +70,12 @@ export function discoverCustomSkills(): BotCommand[] {
       if (BOT_COMMANDS.some((c) => c.command === command)) continue;
       if (BUILTIN_SKILL_COMMANDS.some((c) => c.command === command)) continue;
 
-      // Telegram command descriptions max 256 chars, must not be empty
-      const desc = (description.length > 256 ? description.slice(0, 253) + "..." : description) || `Custom skill: ${dirName}`;
+      // Telegram per-field cap is 256, but the combined setMyCommands payload
+      // has an undocumented ~6 KB sumChars ceiling (BOT_COMMANDS_TOO_MUCH past
+      // that). Cap descriptions at 80 chars to stay well under, and because
+      // autocomplete tooltips truncate visually anyway.
+      const DESC_CAP = 80;
+      const desc = (description.length > DESC_CAP ? description.slice(0, DESC_CAP - 1) + "…" : description) || `Custom skill: ${dirName}`;
 
       skills.push({ command, description: desc });
     } catch {

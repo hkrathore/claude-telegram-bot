@@ -12,7 +12,7 @@ export function createEffortCommand(config: Config, sessionStore: SessionStore) 
     if (!args) {
       const chatId = ctx.chat!.id;
       const session = sessionStore.get(chatId);
-      const current = session?.effort ?? "auto";
+      const current = session?.effort ?? "max";
       await ctx.reply(
         `Current effort: <b>${current}</b>\n\nUsage: /effort [${VALID_EFFORTS.join(" | ")}]`,
         { parse_mode: "HTML" }

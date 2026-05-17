@@ -8,9 +8,14 @@ async function main() {
   const config = loadConfig();
   const bot = createBot(config);
 
-  // Register commands with BotFather for autocomplete
-  await bot.api.setMyCommands(ALL_COMMANDS);
-  console.log(`Registered ${ALL_COMMANDS.length} commands with BotFather`);
+  // Register commands with BotFather for autocomplete. Don't crash the bot if
+  // this fails — autocomplete is non-essential, message handling is the core.
+  try {
+    await bot.api.setMyCommands(ALL_COMMANDS);
+    console.log(`Registered ${ALL_COMMANDS.length} commands with BotFather`);
+  } catch (err) {
+    console.error(`Failed to register ${ALL_COMMANDS.length} commands with BotFather (continuing):`, err);
+  }
 
   // Graceful shutdown
   let server: Server | undefined;

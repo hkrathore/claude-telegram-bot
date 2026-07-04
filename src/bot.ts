@@ -19,6 +19,8 @@ import { createEffortCommand } from "./commands/effort.js";
 import { createCompactCommand } from "./commands/cli-commands.js";
 import { SKILL_COMMANDS } from "./commands/index.js";
 import { cancelInvocation } from "./state.js";
+import { spawn } from "node:child_process";
+import { openSync } from "node:fs";
 
 export function createBot(config: Config): Bot<BotContext> {
   const bot = new Bot<BotContext>(config.telegramToken);
@@ -69,6 +71,45 @@ export function createBot(config: Config): Bot<BotContext> {
     }
 
     await invokeAndRespond({ ctx, config, sessionStore, prompt });
+  });
+
+  // Career-ops "Gen CV" inline button (from a sniper alert). Fires detached; the
+  // gen takes minutes, well past the callback-ack window, so we ack immediately
+  // and let cv-remote.mjs DM the finished PDF. Delivery target = the tapper's DM.
+  const spawnCvRemote = (
+    jobId: string,
+    userId: number,
+    opts: { force?: boolean; cover?: boolean } = {},
+  ) => {
+    const logFd = openSync("/home/ubuntu/.claude/logs/cv-remote.log", "a");
+    const args = ["/home/ubuntu/Code/career-ops/cv-remote.mjs", jobId, "--chat", String(userId)];
+    if (opts.force) args.push("--force");
+    if (opts.cover) args.push("--cover");
+    const child = spawn("node", args, {
+      cwd: "/home/ubuntu/Code/career-ops",
+      detached: true,
+      stdio: ["ignore", logFd, logFd],
+      env: { ...process.env, PATH: `/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin:${process.env.PATH ?? ""}` },
+    });
+    child.unref();
+  };
+
+  bot.callbackQuery(/^cv:(\d+)$/, async (ctx) => {
+    const jobId = (ctx.match as RegExpMatchArray)[1];
+    await ctx.answerCallbackQuery({ text: "Generating your CV — I'll DM the PDF (~6 min)." });
+    spawnCvRemote(jobId, ctx.from.id, { force: false });
+  });
+
+  bot.callbackQuery(/^cvf:(\d+)$/, async (ctx) => {
+    const jobId = (ctx.match as RegExpMatchArray)[1];
+    await ctx.answerCallbackQuery({ text: "Generating anyway — I'll DM the PDF." });
+    spawnCvRemote(jobId, ctx.from.id, { force: true });
+  });
+
+  bot.callbackQuery(/^cover:(\d+)$/, async (ctx) => {
+    const jobId = (ctx.match as RegExpMatchArray)[1];
+    await ctx.answerCallbackQuery({ text: "Generating your cover letter — I'll DM the PDF (~6 min)." });
+    spawnCvRemote(jobId, ctx.from.id, { cover: true });
   });
 
   // Voice message handler
